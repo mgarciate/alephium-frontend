@@ -2,14 +2,10 @@
   "name": "alephium-frontend",
   "description": "A monorepo containing all things frontend on Alephium",
   "author": "Alephium dev <dev@alephium.org>",
-  "packageManager": "bun@1.0.9",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "packageManager": "pnpm@8.6.10",
   "scripts": {
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "postinstall": "patch-package"
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@alephium/token-list": "^0.0.12",
@@ -27,9 +23,17 @@
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "eslint-plugin-unused-imports": "^3.0.0",
     "prettier": "^3.0.3",
-    "tsconfig": "*",
+    "tsconfig": "workspace:*",
     "turbo": "1.10.16",
     "typescript": "^5.2.2",
     "vite-plugin-node-polyfills": "^0.16.0"
-  }
+  },
+  "pnpm": {
+    "overrides": {
+      "semver@<7.5.2": "^7.5.2"
+    },
+    "patchedDependencies": {
+      "react-native-aes-crypto@2.1.1": "patches/react-native-aes-crypto@2.1.1.patch"
+    }
+}
 }
