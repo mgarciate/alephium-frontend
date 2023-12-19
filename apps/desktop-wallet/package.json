@@ -151,12 +151,15 @@
     },
     "mac": {
       "hardenedRuntime": true,
-      "requirements": "build/requirements.rqset",
+      "requirements": "assets/requirements.rqset",
       "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
       "buildResources": "assets"
     },
+    "extraResources": [
+      "./assets/**"
+    ],
     "afterPack": ".afterPack.js",
     "afterAllArtifactBuild": ".afterAllArtifactBuild.js",
     "afterSign": "electron-builder-notarize",
