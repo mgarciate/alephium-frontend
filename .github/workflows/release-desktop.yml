@@ -75,6 +75,20 @@ jobs:
           name: logfile
           path: ${{ github.workspace }}/apps/desktop-wallet/build/notarization-error.log
 
+      - name: Upload notarization-error.log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logfile
+          path: ${{ github.workspace }}/apps/desktop-wallet/dist/notarization-error.log
+
+      - name: Upload notarization-error.log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logfile
+          path: ${{ github.workspace }}/apps/desktop-wallet/notarization-error.log
+
   # generate-lockfile:
   #   runs-on: ubuntu-latest
 
