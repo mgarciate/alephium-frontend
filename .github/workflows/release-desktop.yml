@@ -68,6 +68,10 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
 
+      - name: Find error log
+        if: always()
+        run: find ${{ github.workspace }} -name notarization-error.log
+
       - name: Upload notarization-error.log
         if: always()
         uses: actions/upload-artifact@v3
