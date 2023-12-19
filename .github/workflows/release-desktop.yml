@@ -68,6 +68,13 @@ jobs:
           APPLEIDPASS: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_TOKEN }}
 
+      - name: Upload notarization-error.log
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: logfile
+          path: ${{ github.workspace }}/apps/desktop-wallet/build/notarization-error.log
+
   # generate-lockfile:
   #   runs-on: ubuntu-latest
 
