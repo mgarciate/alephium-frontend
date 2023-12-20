@@ -124,6 +124,7 @@
     "productName": "Alephium",
     "files": [
       "build/**/*",
+      "assets/**/*",
       "public/electron.js",
       "public/preload.js",
       "node_modules/**/*",
@@ -151,7 +152,7 @@
     },
     "mac": {
       "hardenedRuntime": true,
-      "requirements": "requirements.rqset",
+      "requirements": "assets/requirements.rqset",
       "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
