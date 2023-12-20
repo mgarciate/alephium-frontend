@@ -151,7 +151,7 @@
     },
     "mac": {
       "hardenedRuntime": true,
-      "requirements": "assets/requirements.rqset",
+      "requirements": "build/requirements.rqset",
       "entitlements": "../../node_modules/electron-builder-notarize/entitlements.mac.inherit.plist"
     },
     "directories": {
