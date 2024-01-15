@@ -134,6 +134,7 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
 
       const client = await SignClient.init({
         projectId: '2a084aa1d7e09af2b9044a524f39afbe',
+        logger: 'debug',
         metadata: {
           name: 'Alephium mobile wallet',
           description: 'Alephium mobile wallet',
@@ -144,6 +145,34 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
           }
         }
       })
+
+      const on_relayer_message = () => console.log('received event: relayer_message')
+      const on_relayer_message_ack = () => console.log('received event: relayer_message_ack')
+      const on_relayer_connect = () => console.log('received event: relayer_connect')
+      const on_relayer_disconnect = () => console.log('received event: relayer_disconnect')
+      const on_relayer_error = () => console.log('received event: relayer_error')
+      const on_relayer_connection_stalled = () => console.log('received event: relayer_connection_stalled')
+      const on_relayer_transport_closed = () => console.log('received event: relayer_transport_closed')
+      const on_relayer_publish = () => console.log('received event: relayer_publish')
+
+      const on_relayer_provider_payload = () => console.log('received event: relayer_provider_payload')
+      const on_relayer_provider_connect = () => console.log('received event: relayer_provider_connect')
+      const on_relayer_provider_disconnect = () => console.log('received event: relayer_provider_disconnect')
+      const on_relayer_provider_error = () => console.log('received event: relayer_provider_error')
+
+      client.core.relayer.on('relayer_message', on_relayer_message)
+      client.core.relayer.on('relayer_message_ack', on_relayer_message_ack)
+      client.core.relayer.on('relayer_connect', on_relayer_connect)
+      client.core.relayer.on('relayer_disconnect', on_relayer_disconnect)
+      client.core.relayer.on('relayer_error', on_relayer_error)
+      client.core.relayer.on('relayer_connection_stalled', on_relayer_connection_stalled)
+      client.core.relayer.on('relayer_transport_closed', on_relayer_transport_closed)
+      client.core.relayer.on('relayer_publish', on_relayer_publish)
+
+      client.core.relayer.provider.on('payload', on_relayer_provider_payload)
+      client.core.relayer.provider.on('connect', on_relayer_provider_connect)
+      client.core.relayer.provider.on('disconnect', on_relayer_provider_disconnect)
+      client.core.relayer.provider.on('error', on_relayer_provider_error)
 
       console.log('✅ INITIALIZING WC CLIENT: DONE!')
       cleanHistory(client, false)
@@ -230,6 +259,8 @@ export const WalletConnectContextProvider = ({ children }: { children: ReactNode
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
       if (!walletConnectClient) return
+
+      console.log('SESSION REQUEST METHOD:', requestEvent.params.request.method)
 
       try {
         switch (requestEvent.params.request.method as RelayMethod) {
