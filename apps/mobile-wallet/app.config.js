@@ -45,7 +45,7 @@ export default {
       }
     },
     android: {
-      allowBackup: false,
+      // allowBackup: false,
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#000000'
