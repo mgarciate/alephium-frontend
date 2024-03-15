@@ -19,7 +19,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 import * as SecureStore from 'expo-secure-store'
 
 export const defaultSecureStoreConfig = {
-  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  keychainAccessible: SecureStore.WHEN_UNLOCKED,
   keychainService: 'mobile-wallet-key-service'
 }
 
