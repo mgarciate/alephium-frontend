@@ -74,20 +74,10 @@ const addressesAdapter = createEntityAdapter<Address>({
 })
 
 interface AddressesState extends EntityState<Address> {
-  loadingBalances: boolean
-  loadingTokens: boolean
-  loadingLatestTransactions: boolean
-  loadingTransactionsNextPage: boolean
-  loadingAlphHistoricBalances: boolean
   status: 'uninitialized' | 'initialized'
 }
 
 const initialState: AddressesState = addressesAdapter.getInitialState({
-  loadingBalances: false,
-  loadingTokens: false,
-  loadingLatestTransactions: false,
-  loadingTransactionsNextPage: false,
-  loadingAlphHistoricBalances: false,
   status: 'uninitialized'
 })
 
@@ -309,10 +299,6 @@ const addressesSlice = createSlice({
         addressesAdapter.setAll(state, [])
         addressesAdapter.addOne(state, firstWalletAddress)
       })
-
-      .addCase(syncAddressesTokens.pending, (state) => {
-        state.loadingTokens = true
-      })
       .addCase(syncAddressesTokens.fulfilled, (state, action) => {
         const addressData = action.payload
         const updatedAddresses = addressData.map(({ hash, tokenBalances }) => ({
@@ -323,15 +309,6 @@ const addressesSlice = createSlice({
         }))
 
         addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTokens = false
-      })
-      .addCase(syncAddressesTokens.rejected, (state) => {
-        state.loadingTokens = false
-      })
-
-      .addCase(syncAddressesBalances.pending, (state) => {
-        state.loadingBalances = true
       })
       .addCase(syncAddressesBalances.fulfilled, (state, action) => {
         const addressData = action.payload
@@ -344,15 +321,6 @@ const addressesSlice = createSlice({
         }))
 
         addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingBalances = false
-      })
-      .addCase(syncAddressesBalances.rejected, (state) => {
-        state.loadingBalances = false
-      })
-
-      .addCase(syncLatestTransactions.pending, (state) => {
-        state.loadingLatestTransactions = true
       })
       .addCase(syncLatestTransactions.fulfilled, (state, { payload }) => {
         const changes = payload.map(({ hash, newTransactions }) => {
@@ -370,14 +338,6 @@ const addressesSlice = createSlice({
         if (changes.length > 0) addressesAdapter.updateMany(state, changes)
 
         state.status = 'initialized'
-        state.loadingLatestTransactions = false
-      })
-      .addCase(syncLatestTransactions.rejected, (state) => {
-        state.loadingLatestTransactions = false
-      })
-
-      .addCase(syncAllAddressesTransactionsNextPage.pending, (state) => {
-        state.loadingTransactionsNextPage = true
       })
       .addCase(syncAllAddressesTransactionsNextPage.fulfilled, (state, { payload: { transactions } }) => {
         const addresses = getAddresses(state)
@@ -398,20 +358,10 @@ const addressesSlice = createSlice({
         })
 
         addressesAdapter.updateMany(state, updatedAddresses)
-
-        state.loadingTransactionsNextPage = false
       })
-      .addCase(syncAllAddressesTransactionsNextPage.rejected, (state) => {
-        state.loadingTransactionsNextPage = false
-      })
-
       .addCase(networkPresetSwitched, clearAddressesNetworkData)
       .addCase(customNetworkSettingsSaved, clearAddressesNetworkData)
       .addCase(appReset, () => initialState)
-
-      .addCase(syncAddressesAlphHistoricBalances.pending, (state) => {
-        state.loadingAlphHistoricBalances = true
-      })
       .addCase(syncAddressesAlphHistoricBalances.fulfilled, (state, { payload: data }) => {
         data.forEach(({ address, balances }) => {
           const addressState = state.entities[address]
@@ -420,11 +370,6 @@ const addressesSlice = createSlice({
             balanceHistoryAdapter.upsertMany(addressState.balanceHistory, balances)
           }
         })
-
-        state.loadingAlphHistoricBalances = false
-      })
-      .addCase(syncAddressesAlphHistoricBalances.rejected, (state) => {
-        state.loadingAlphHistoricBalances = false
       })
   }
 })
