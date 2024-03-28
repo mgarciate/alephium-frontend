@@ -76,13 +76,13 @@ const CheckWordsPage = () => {
     )
   }, [mnemonic])
 
-  useEffect(() => {
-    if (!mnemonic) return
+  // useEffect(() => {
+  //   if (!mnemonic) return
 
-    console.log('☢️ LEAKING IN MEMORY FROM CheckWordsPage')
+  //   console.log('☢️ LEAKING IN MEMORY FROM CheckWordsPage')
 
-    setIsValid(selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertBufferMnemonicToString(mnemonic))
-  }, [mnemonic, selectedWords])
+  //   setIsValid(selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertBufferMnemonicToString(mnemonic))
+  // }, [mnemonic, selectedWords])
 
   // === Actions ===
   // ===============
