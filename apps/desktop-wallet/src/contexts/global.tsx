@@ -34,7 +34,6 @@ import { walletLocked, walletSwitched, walletUnlocked } from '@/storage/wallets/
 import { walletStorage } from '@/storage/wallets/walletPersistentStorage'
 import { StoredEncryptedWallet } from '@/types/wallet'
 import { AlephiumWindow } from '@/types/window'
-import { migrateUserData } from '@/utils/migration'
 
 interface WalletUnlockProps {
   event: 'unlock' | 'switch'
@@ -101,7 +100,7 @@ export const GlobalContextProvider: FC<{ overrideContextValue?: PartialDeep<Glob
     }
 
     try {
-      migrateUserData(encryptedWallet.id, password, version)
+      // migrateUserData(encryptedWallet.id, password, version)
     } catch (e) {
       console.error(e)
       posthog.capture('Error', { message: 'User data migration failed ' })

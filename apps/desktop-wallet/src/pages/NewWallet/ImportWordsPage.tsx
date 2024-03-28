@@ -68,7 +68,7 @@ const ImportWordsPage = () => {
     if (!isPhraseLongEnough) return
 
     try {
-      setMnemonic(keyring.importMnemonicString(phrase.map((word) => word.value).join(' ')))
+      // setMnemonic(keyring.importMnemonicString(phrase.map((word) => word.value).join(' ')))
 
       onButtonNext()
     } catch (e) {
