@@ -37,6 +37,7 @@ import PanelTitle from '@/components/PageComponents/PanelTitle'
 import Paragraph from '@/components/Paragraph'
 import { useStepsContext } from '@/contexts/steps'
 import { useWalletContext } from '@/contexts/wallet'
+import { dangerouslyConvertBufferMnemonicToString } from '@alephium/shared-crypto'
 
 interface WordKey {
   word: string
@@ -78,7 +79,7 @@ const CheckWordsPage = () => {
   useEffect(() => {
     if (!mnemonic) return
 
-    setIsValid(selectedWords.map(({ word }) => word).join(' ') === mnemonic.toString())
+    setIsValid(selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertBufferMnemonicToString(mnemonic))
   }, [mnemonic, selectedWords])
 
   // === Actions ===
