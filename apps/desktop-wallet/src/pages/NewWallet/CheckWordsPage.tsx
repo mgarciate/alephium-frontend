@@ -79,6 +79,8 @@ const CheckWordsPage = () => {
   useEffect(() => {
     if (!mnemonic) return
 
+    console.log('☢️ LEAKING IN MEMORY FROM CheckWordsPage')
+
     setIsValid(selectedWords.map(({ word }) => word).join(' ') === dangerouslyConvertBufferMnemonicToString(mnemonic))
   }, [mnemonic, selectedWords])
 

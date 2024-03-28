@@ -39,6 +39,7 @@ const SecretPhraseModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleCorrectPasswordEntered = (password: string) => {
     try {
+      console.log('☢️ LEAKING IN MEMORY FROM SecretPhraseModal')
       setMnemonic(
         dangerouslyConvertBufferMnemonicToString(
           decryptMnemonic(walletStorage.load(activeWalletId).encrypted, password).decryptedMnemonic

@@ -52,8 +52,10 @@ const WalletWordsPage = () => {
 
   if (!mnemonic) return null
 
-  const renderMnemonicWords = () =>
-    dangerouslyConvertBufferMnemonicToString(mnemonic)
+  const renderMnemonicWords = () => {
+    console.log('☢️ LEAKING IN MEMORY FROM WalletWordsPage')
+
+    return dangerouslyConvertBufferMnemonicToString(mnemonic)
       .split(' ')
       .map((w, i) => (
         <MnemonicWordContainer key={i}>
@@ -61,6 +63,7 @@ const WalletWordsPage = () => {
           <MnemonicWord>{w}</MnemonicWord>
         </MnemonicWordContainer>
       ))
+  }
 
   const handleBackPress = () => {
     keyring.clearCachedSecrets()

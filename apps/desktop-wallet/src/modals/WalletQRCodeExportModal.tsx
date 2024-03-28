@@ -75,6 +75,7 @@ const WalletQRCodeExportModal = ({ onClose }: { onClose: () => void }) => {
 
   const handleCorrectPasswordEntered = (password: string) => {
     try {
+      console.log('☢️ LEAKING IN MEMORY FROM WalletQRCodeExportModal')
       const encryptedData = encrypt(
         password,
         JSON.stringify({

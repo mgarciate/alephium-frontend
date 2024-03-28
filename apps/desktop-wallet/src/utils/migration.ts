@@ -359,6 +359,8 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
 
     try {
       if (parsedMetadataJson?.encrypted) {
+        console.log('☢️ LEAKING IN MEMORY FROM parsedMetadataJson')
+
         const metadata = JSON.parse(
           decrypt(dangerouslyConvertBufferMnemonicToString(result.decryptedMnemonic), parsedMetadataJson.encrypted)
         ) as AddressMetadata[]
@@ -366,6 +368,8 @@ export const _20240328_1221_migrateAddressAndContactsToUnencrypted = (
       }
 
       if (parsedContactsJson?.encrypted) {
+        console.log('☢️ LEAKING IN MEMORY FROM parsedContactsJson')
+
         const contacts = JSON.parse(
           decrypt(dangerouslyConvertBufferMnemonicToString(result.decryptedMnemonic), parsedContactsJson.encrypted)
         ) as Contact[]
