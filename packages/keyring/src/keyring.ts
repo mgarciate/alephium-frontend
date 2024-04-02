@@ -63,8 +63,8 @@ class Keyring {
   }
 
   public generateRandomMnemonic = (mnemonicLength: MnemonicLength = 24): Uint8Array => {
-    // const strength = mnemonicLength === 24 ? 256 : 128
-    const mnemonic = generateMnemonic(wordlist)
+    const strength = mnemonicLength === 24 ? 256 : 128
+    const mnemonic = generateMnemonic(wordlist, strength)
 
     this._initFromMnemonic(mnemonic, '')
 
