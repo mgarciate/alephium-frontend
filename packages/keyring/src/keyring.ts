@@ -44,11 +44,13 @@ type GenerateAddressProps = {
 
 class Keyring {
   private hdPath = "m/44'/1234'/0'/0"
+  private hdWallet: HDKey | null
   private root: HDKey | null
   private addresses: SensitiveAddressData[]
 
   constructor() {
     this.addresses = []
+    this.hdWallet = null
     this.root = null
   }
 
@@ -56,6 +58,7 @@ class Keyring {
 
   public clearCachedSecrets = () => {
     this.addresses = []
+    this.hdWallet = null
     this.root = null
   }
 
@@ -229,22 +232,18 @@ class Keyring {
     if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
     const seed = mnemonicToSeedSync(mnemonic, wordlist, passphrase)
-    this.root = HDKey.fromMasterSeed(seed)
+    this.hdWallet = HDKey.fromMasterSeed(seed)
+    this.root = this.hdWallet.derive(this.hdPath)
 
     passphrase = ''
     mnemonic = null
   }
 
-  private _getPath = (addressIndex: number = 0) => {
-    if (!isAddressIndexValid(addressIndex)) throw new Error('Invalid address index path level')
-
-    return `${this.hdPath}/${addressIndex}`
-  }
-
   private _deriveAddressAndKeys = (addressIndex: number): SensitiveAddressData => {
     if (!this.root) throw new Error('Keyring: Cannot derive address and keys, secret recovery phrase is not provided')
+    if (!isAddressIndexValid(addressIndex)) throw new Error('Invalid address index path level')
 
-    const keyPair = this.root.derive(this._getPath(addressIndex))
+    const keyPair = this.root.deriveChild(addressIndex)
 
     if (!keyPair.publicKey) throw new Error('Keyring: Missing public key')
     if (!keyPair.privateKey) throw new Error('Keyring: Missing private key')
