@@ -44,25 +44,34 @@ const NFTDetailsModal = ({ nftId, onClose }: TransactionDetailsModalProps) => {
         <NFTThumbnail size="100%" nft={nft} />
       </NFTImageContainer>
       <NFTMetadataContainer>
-        <DataList>
-          <DataList.Row label={t('Name')}>
-            <b>{nft.name}</b>
-          </DataList.Row>
-          <DataList.Row label={t('Description')}>{nft.description}</DataList.Row>
-          <DataList.Row label={t('Image URL')}>
-            <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
-              {nft.image}
-            </ActionLink>
-          </DataList.Row>
-        </DataList>
+        <DataList
+          data={[
+            {
+              label: t('Name'),
+              content: <b>{nft.name}</b>
+            },
+            {
+              label: t('Description'),
+              content: nft.description
+            },
+            {
+              label: t('Image URL'),
+              content: (
+                <ActionLink ellipsed onClick={() => openInWebBrowser(nft.image)}>
+                  {nft.image}
+                </ActionLink>
+              )
+            }
+          ]}
+        />
         {nft.attributes && (
-          <DataList title={t('Attributes')}>
-            {nft.attributes.map((attribute, index) => (
-              <DataList.Row key={index} label={attribute.trait_type}>
-                {attribute.value}
-              </DataList.Row>
-            ))}
-          </DataList>
+          <DataList
+            title={t('Attributes')}
+            data={nft.attributes.map((attribute) => ({
+              label: attribute.trait_type,
+              content: attribute.value.toString()
+            }))}
+          />
         )}
       </NFTMetadataContainer>
     </SideModal>
