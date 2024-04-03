@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
-import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from '@metamask/scure-bip39'
+import { generateMnemonic, mnemonicToSeedSync } from '@metamask/scure-bip39'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
@@ -227,9 +227,6 @@ class Keyring {
   private _initFromMnemonic = (mnemonic: Uint8Array | null, passphrase: string) => {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
-
-    const isValid = validateMnemonic(mnemonic, wordlist)
-    if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
     const seed = mnemonicToSeedSync(mnemonic, wordlist, passphrase)
     this.hdWallet = HDKey.fromMasterSeed(seed)

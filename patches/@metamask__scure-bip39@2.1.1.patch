@@ -1,0 +1,25 @@
+diff --git a/dist/index.js b/dist/index.js
+index e0c500c44b31f83a5f043c78805be1f7accbef08..87bb684b7b5ea1db75d703c470bb3b0ab76b66bf 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -148,7 +148,9 @@ exports.mnemonicToSeed = mnemonicToSeed;
+  */
+ function mnemonicToSeedSync(mnemonic, wordlist, passphrase = '') {
+     const encodedMnemonicUint8Array = encodeMnemonicForSeedDerivation(mnemonic, wordlist);
+-    return (0, pbkdf2_1.pbkdf2)(sha512_1.sha512, encodedMnemonicUint8Array, salt(passphrase), { c: 2048, dkLen: 64 });
++    const result = (0, pbkdf2_1.pbkdf2)(sha512_1.sha512, encodedMnemonicUint8Array, salt(passphrase), { c: 2048, dkLen: 64 });
++    resetArray(encodedMnemonicUint8Array)
++    return result
+ }
+ exports.mnemonicToSeedSync = mnemonicToSeedSync;
+ /**
+@@ -166,3 +168,9 @@ function encodeMnemonicForSeedDerivation(mnemonic, wordlist) {
+     }
+     return encodedMnemonicUint8Array;
+ }
++
++function resetArray(array) {
++    for (let i = 0; i < array.length; i++) {
++        array[i] = 0
++    }
++}
