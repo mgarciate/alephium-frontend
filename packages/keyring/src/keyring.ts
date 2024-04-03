@@ -18,7 +18,7 @@ along with the library. If not, see <http://www.gnu.org/licenses/>.
 
 import { AddressHash } from '@alephium/shared'
 import { addressToGroup, bs58, ExplorerProvider, sign, TOTAL_NUMBER_OF_GROUPS, transactionSign } from '@alephium/web3'
-import { generateMnemonic, mnemonicToSeedSync, validateMnemonic } from '@metamask/scure-bip39'
+import { generateMnemonic, mnemonicToSeedSync } from '@metamask/scure-bip39'
 import { wordlist } from '@metamask/scure-bip39/dist/wordlists/english'
 import blake from 'blakejs'
 import { HDKey } from 'ethereum-cryptography/hdkey'
@@ -228,10 +228,10 @@ class Keyring {
     if (this.root) throw new Error('Keyring: Secret recovery phrase already provided')
     if (!mnemonic) throw new Error('Keyring: Secret recovery phrase not provided')
 
-    const isValid = validateMnemonic(mnemonic, wordlist)
-    if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
+    // const isValid = validateMnemonic(mnemonic, wordlist)
+    // if (!isValid) throw new Error('Keyring: Invalid secret recovery phrase provided')
 
-    const seed = mnemonicToSeedSync(mnemonic, wordlist, passphrase)
+    const seed = mnemonicToSeedSync(encodeMnemonicForSeedDerivation(mnemonic), wordlist, passphrase)
     this.hdWallet = HDKey.fromMasterSeed(seed)
     this.root = this.hdWallet.derive(this.hdPath)
 
@@ -331,3 +331,46 @@ export const findNextAvailableAddressIndex = (startIndex: number, skipIndexes: n
 
 export const isAddressIndexValid = (addressIndex: number) =>
   addressIndex >= 0 && Number.isInteger(addressIndex) && !addressIndex.toString().includes('e')
+
+const encodeMnemonicForSeedDerivation = (mnemonic: Uint8Array) => {
+  const mnemonicIndexes = Array.from(new Uint16Array(mnemonic.buffer))
+  const allBipWordsAsUint8Arrays = wordlist.map((word) => new TextEncoder().encode(word))
+  const spaceAsUint8Array = new TextEncoder().encode(' ')
+
+  // Calculate new Uint8Array length
+  const totalLength = mnemonicIndexes.reduce(
+    (acc, wordIndex, index) =>
+      acc +
+      allBipWordsAsUint8Arrays[wordIndex].length +
+      (index < mnemonicIndexes.length - 1 ? spaceAsUint8Array.length : 0), // add space
+    0
+  )
+
+  const mnemonicAsUint8Array = new Uint8Array(totalLength)
+  let offset = 0
+
+  for (let i = 0; i < mnemonicIndexes.length; i++) {
+    const index = mnemonicIndexes[i]
+    const mnemonicWordAsUint8Array = allBipWordsAsUint8Arrays[index]
+
+    mnemonicAsUint8Array.set(mnemonicWordAsUint8Array, offset)
+    offset += mnemonicWordAsUint8Array.length
+
+    if (i < mnemonicIndexes.length - 1) {
+      mnemonicAsUint8Array.set(spaceAsUint8Array, offset)
+      offset += spaceAsUint8Array.length
+    }
+
+    // resetArray(mnemonicWordAsUint8Array)
+  }
+
+  resetArray(mnemonicIndexes)
+
+  return mnemonicAsUint8Array
+}
+
+const resetArray = (array: Uint8Array | number[]) => {
+  for (let i = 0; i < array.length; i++) {
+    array[i] = 0
+  }
+}
