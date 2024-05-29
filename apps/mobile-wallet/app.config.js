@@ -93,8 +93,7 @@ export default {
         {
           ios: {
             deploymentTarget: '13.4',
-            newArchEnabled: false,
-            flipper: false // https://docs.expo.dev/guides/using-flipper/
+            newArchEnabled: false
           },
           android: {
             compileSdkVersion: 34,
