@@ -37,6 +37,8 @@ import ModalWithBackdrop from '~/components/ModalWithBackdrop'
 import Row from '~/components/Row'
 import Toggle from '~/components/Toggle'
 import { useWalletConnectContext } from '~/contexts/walletConnect/WalletConnectContext'
+import AutoLockOptionsModal from '~/features/auto-lock/AutoLockOptionsModal'
+import { getAutoLockLabel } from '~/features/auto-lock/utils'
 import useFundPasswordGuard from '~/features/fund-password/useFundPasswordGuard'
 import { useAppDispatch, useAppSelector } from '~/hooks/redux'
 import { useBiometrics, useBiometricsAuthGuard } from '~/hooks/useBiometrics'
@@ -70,6 +72,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const currentNetworkName = useAppSelector((s) => s.network.name)
   const isBiometricsEnabled = useAppSelector((s) => s.settings.usesBiometrics)
   const usesFundPassword = useAppSelector((s) => s.settings.usesFundPassword)
+  const autoLockSeconds = useAppSelector((s) => s.settings.autoLockSeconds)
   const analytics = useAppSelector((s) => s.settings.analytics)
   const walletName = useAppSelector((s) => s.wallet.name)
   const theme = useTheme()
@@ -77,6 +80,7 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
   const { triggerBiometricsAuthGuard } = useBiometricsAuthGuard()
   const { triggerFundPasswordAuthGuard, fundPasswordModal } = useFundPasswordGuard()
 
+  const [isAutoLockSecondsModalOpen, setIsAutoLockSecondsModalOpen] = useState(false)
   const [isSwitchNetworkModalOpen, setIsSwitchNetworkModalOpen] = useState(false)
   const [isCurrencySelectModalOpen, setIsCurrencySelectModalOpen] = useState(false)
   const [isMnemonicModalVisible, setIsMnemonicModalVisible] = useState(false)
@@ -221,8 +225,16 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
                   disabled={!deviceHasEnrolledBiometrics}
                 />
               </Row>
-              <Row title="Fund password" subtitle="Enhance your security" isLast>
+              <Row title="Fund password" subtitle="Enhance your security">
                 <Toggle value={usesFundPassword} onValueChange={handleFundPasswordPress} />
+              </Row>
+              <Row
+                title="Auto-lock"
+                subtitle="Amount of time before app locks"
+                isLast
+                onPress={() => setIsAutoLockSecondsModalOpen(true)}
+              >
+                <AppText bold>{getAutoLockLabel(autoLockSeconds)}</AppText>
               </Row>
             </BoxSurface>
           </ScreenSection>
@@ -334,6 +346,12 @@ const SettingsScreen = ({ navigation, ...props }: ScreenProps) => {
           isOpen={isCurrencySelectModalOpen}
           onClose={() => setIsCurrencySelectModalOpen(false)}
           Content={(props) => <CurrencySelectModal onClose={() => setIsCurrencySelectModalOpen(false)} {...props} />}
+        />
+
+        <BottomModal
+          isOpen={isAutoLockSecondsModalOpen}
+          onClose={() => setIsAutoLockSecondsModalOpen(false)}
+          Content={(props) => <AutoLockOptionsModal onClose={() => setIsAutoLockSecondsModalOpen(false)} {...props} />}
         />
 
         <BottomModal
