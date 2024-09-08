@@ -1,0 +1,69 @@
+name: Sync Repo and Tag Release
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # Runs the action every hour. Adjust based on your needs.
+  workflow_dispatch:
+
+jobs:
+  sync_and_tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout your repo (myrepo2)
+      - name: Checkout myrepo2
+        uses: actions/checkout@v3
+
+      # Add repo1 as an upstream to fetch tags from it
+      - name: Add repo1 as upstream
+        run: git remote add upstream https://github.com/mgarciate/repo1.git
+
+      # Fetch all tags and branches from repo1
+      - name: Fetch upstream changes
+        run: git fetch upstream --tags
+
+      # Get the latest release from myrepo2 using GitHub API
+      - name: Get latest release from myrepo2
+        id: myrepo2_release
+        run: |
+          latest_release=$(curl -s \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/mgtedejo/myrepo2/releases/latest | jq -r .tag_name)
+          echo "latest_myrepo2_release=$latest_release" >> $GITHUB_ENV
+
+      # Get latest tag from repo1 (@alephium/explorer@x.x.x)
+      - name: Get latest tag from repo1
+        id: repo1_tag
+        run: |
+          latest_upstream_tag=$(git tag --list '@alephium/explorer@*' --sort=-v:refname | head -n 1)
+          echo "latest_upstream_tag=$latest_upstream_tag" >> $GITHUB_ENV
+
+      # Get the commit hash of the latest tag from repo1
+      - name: Get commit hash of the latest tag in repo1
+        id: repo1_commit
+        run: |
+          latest_commit_hash=$(git rev-list -n 1 ${{ env.latest_upstream_tag }})
+          echo "latest_commit_hash=$latest_commit_hash" >> $GITHUB_ENV
+
+      # Compare the latest release from myrepo2 and the latest tag from repo1
+      - name: Compare releases and create a new tag if necessary
+        if: env.latest_upstream_tag != '' && env.latest_myrepo2_release != '' && env.latest_upstream_tag != env.latest_myrepo2_release
+        run: |
+          upstream_version=$(echo "$latest_upstream_tag" | sed 's/@alephium\/explorer@//')
+          echo "upstream_version=$upstream_version" >> $GITHUB_ENV
+
+          # Create a new tag in myrepo2 at the same commit as the upstream tag
+          git tag $upstream_version ${{ env.latest_commit_hash }}
+          
+          # Push the new tag to myrepo2
+          git push origin $upstream_version
+
+      # Create a release in myrepo2 from the newly created tag
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.upstream_version }}
+          name: ${{ env.upstream_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
