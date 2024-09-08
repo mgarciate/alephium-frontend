@@ -2,8 +2,12 @@ name: Sync Repo and Tag Release
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs the action every hour. Adjust based on your needs.
+    - cron: '00 */4 * * *'  # Runs the action every hour. Adjust based on your needs.
   workflow_dispatch:
+  
+permissions:
+  contents: write
+  actions: write  # This grants the necessary permission to modify workflow files
 
 jobs:
   sync_and_tag:
@@ -16,7 +20,7 @@ jobs:
 
       # Add repo1 as an upstream to fetch tags from it
       - name: Add repo1 as upstream
-        run: git remote add upstream https://github.com/mgarciate/repo1.git
+        run: git remote add upstream https://github.com/alephium/alephium-frontend.git
 
       # Fetch all tags and branches from repo1
       - name: Fetch upstream changes
@@ -29,7 +33,7 @@ jobs:
           latest_release=$(curl -s \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/mgtedejo/myrepo2/releases/latest | jq -r .tag_name)
+            https://api.github.com/repos/mgarciate/alephium-frontend/releases/latest | jq -r .tag_name)
           echo "latest_myrepo2_release=$latest_release" >> $GITHUB_ENV
 
       # Get latest tag from repo1 (@alephium/explorer@x.x.x)
@@ -56,10 +60,10 @@ jobs:
           # Create a new tag in myrepo2 at the same commit as the upstream tag
           git tag $upstream_version ${{ env.latest_commit_hash }}
           
-          # Push the new tag to myrepo2
-          git push origin $upstream_version
+          # Push the new tag to myrepo2 (not necessary)
+          # git push origin $upstream_version
 
-      # Create a release in myrepo2 from the newly created tag
+      # Create a release in myrepo2 from the newly created tag (or not)
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         with:
